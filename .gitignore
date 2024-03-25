@@ -30,4 +30,4 @@ coverage
 *.tsbuildinfo
 
 
-src/backend/
+src/backend/data

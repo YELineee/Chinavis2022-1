@@ -1,0 +1,34 @@
+[
+   {
+      "name": "Domain",
+      "value": 230
+   },
+   {
+      "name": "IP",
+      "value": 107
+   },
+   {
+      "name": "Whois_Email",
+      "value": 9
+   },
+   {
+      "name": "Whois_Phone",
+      "value": 9
+   },
+   {
+      "name": "Whois_Name",
+      "value": 6
+   },
+   {
+      "name": "Cert",
+      "value": 5
+   },
+   {
+      "name": "IP_C",
+      "value": 1
+   },
+   {
+      "name": "ASN",
+      "value": 1
+   }
+]
