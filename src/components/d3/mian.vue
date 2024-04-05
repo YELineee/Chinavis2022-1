@@ -1,123 +1,209 @@
 <template>
   <div style="padding: 10px">
     <div style="border: 3px solid black; border-radius: 10px">
-      <div ref="chartContainer"></div>
+      <div ref="chartContainer" ></div>
+      <div id="tooltip">
+        asdadasd
+      </div>
     </div>
   </div>
 </template>
 
-<script>
+<script setup>
 import * as d3 from "d3";
 import data from "../../backend/ipynb/sad/sad.json";
+import { ref, onMounted } from "vue"; 
 
-export default {
-  data() {
-    return {
-      width: window.innerWidth - 30,
-      height: window.innerHeight - 30,
-      color: d3.scaleOrdinal(d3.schemeCategory10),
-      dpi: window.devicePixelRatio,
-      simulation: null,
-      canvas: null,
-      context: null,
-      nodes: data.nodes,
-      links: data.links,
-    };
-  },
-  methods: {
-    draw() {
-      const context = this.context;
-      const nodes = this.nodes;
-      const links = this.links;
+const width = window.innerWidth - 30;
+const height = window.innerHeight - 30;
+const dpi = window.devicePixelRatio;
 
-      context.clearRect(0, 0, this.width, this.height);
+const nodes = data.nodes;
+const links = data.links;
 
-      context.save();
-      context.globalAlpha = 0.6;
-      context.strokeStyle = "#999";
-      context.beginPath();
-      links.forEach(this.drawLink);
-      context.stroke();
-      context.restore();
+let canvas = null;
+let context = null;
+let simulation = null;
 
-      context.save();
-      context.strokeStyle = "#fff";
-      context.globalAlpha = 1;
-      nodes.forEach((node) => {
-        context.beginPath();
-        this.drawNode(node);
-        context.fillStyle = this.color(node.group);
-        context.strokeStyle = "#fff";
-        context.fill();
-        context.stroke();
-      });
-      context.restore();
-    },
-    drawLink(d) {
-      this.context.moveTo(d.source.x, d.source.y);
-      this.context.lineTo(d.target.x, d.target.y);
-    },
-    drawNode(d) {
-      this.context.moveTo(d.x + 5, d.y);
-      this.context.arc(d.x, d.y, 5, 0, 2 * Math.PI);
-    },
-    dragstarted(event) {
-      if (!event.active) this.simulation.alphaTarget(0.3).restart();
-      event.subject.fx = event.subject.x;
-      event.subject.fy = event.subject.y;
-    },
-    dragged(event) {
-      event.subject.fx = event.x;
-      event.subject.fy = event.y;
-    },
-    dragended(event) {
-      if (!event.active) this.simulation.alphaTarget(0);
-      event.subject.fx = null;
-      event.subject.fy = null;
-    },
-  },
-  mounted() {
-    const chartContainer = this.$refs.chartContainer;
+const chartContainer = ref(null);
 
-    this.canvas = d3
-      .select(chartContainer)
-      .append("canvas")
-      .attr("width", this.dpi * this.width)
-      .attr("height", this.dpi * this.height)
-      .attr("style", `width: ${this.width}px; max-width: 100%; height: auto;`)
-      .node();
+console.log(nodes, links);
 
-    this.context = this.canvas.getContext("2d");
-    this.context.scale(this.dpi, this.dpi);
+const draw = () => {
 
-    this.simulation = d3
-      .forceSimulation(this.nodes)
-      .force(
-        "link",
-        d3.forceLink(this.links).id((d) => d.id),
-      )
-      .force("charge", d3.forceManyBody())
-      .force("center", d3.forceCenter(this.width / 2, this.height / 2))
-      .force("collision", d3.forceCollide().radius(5)) // Add collision force to prevent nodes from overflowing the screen
-      .on("tick", this.draw);
+  const nodeColor = {
+    'IP'   : '#2196F3',
+    'IP_CIDR': '#3F51B5',
+    'ASN'  : '#673AB7',
+    'Cert'  : '#E91E63',
+    'Domain'  : '#FFC107',
+    'Whois_Name': '#4CAF50',
+    'Whois_Email': '#FF5722',
+    'Whois_Phone': '#9C27B0',
+    'default': '#ffffff'
+  };
 
-    d3.select(this.canvas).call(
-      d3
-        .drag()
-        .subject((event) => {
-          const [px, py] = d3.pointer(event, this.canvas);
-          return d3.least(this.nodes, ({ x, y }) => {
-            const dist2 = (x - px) ** 2 + (y - py) ** 2;
-            if (dist2 < 400) return dist2;
-          });
-        })
-        .on("start", this.dragstarted)
-        .on("drag", this.dragged)
-        .on("end", this.dragended),
-    );
-  },
-  beforeDestroy() {
-    this.simulation.stop();
-  },
+  const linkWidth = {
+    'r_cert': '0.8',
+    'r_subdomain'   : '0.8',
+    'r_dns_a': '0.8',
+    'r_request_jump': '0.8',
+    'r_whois_name'  : '0.6',
+    'r_whois_email'  : '0.6',
+    'r_whois_phone'  : '0.6',
+    'r_cert_chain': '0.4',
+    'r_dns_cname': '0.4',
+    'r_cidr': '0.2',
+    'r_asn': '0.2',
+    'default': '0.1'
+  };
+
+  const linkColor = {
+    'r_cert': '#999',
+    'r_subdomain'   : '#999',
+    'r_dns_a': '#999',
+    'r_request_jump': '#999',
+    'r_whois_name'  : '#3F51B5',
+    'r_whois_email'  : '#3F51B5',
+    'r_whois_phone'  : '#3F51B5',
+    'r_cert_chain': '#3F51B5',
+    'r_dns_cname': '#3F51B5',
+    'r_cidr': '#3F51B5',
+    'r_asn': '#3F51B5',
+    'default': '#3F51B5'
+  };
+
+  if (!context || !canvas) return;
+  context.clearRect(0, 0, width, height);
+
+  context.save();
+  context.globalAlpha = 0.8;
+  context.beginPath();
+  links.forEach((link) => {
+    drawLink(link);
+    context.lineWidth = linkWidth[link.relation] || linkWidth['default'];
+    context.strokeStyle = linkColor[link.relation] || linkColor['default'];
+  });
+  context.stroke();
+  context.restore();
+
+  context.save();
+  context.globalAlpha = 1;
+  nodes.forEach((node) => {
+    context.beginPath();
+    drawNode(node);
+    context.fillStyle = nodeColor[node.attribute] || nodeColor['default'];
+    context.strokeStyle = "#fff";
+    context.fill();
+    context.stroke();
+  });
+  context.restore();
 };
+
+const drawLink = (d) => {
+  context.moveTo(d.source.x, d.source.y);
+  context.lineTo(d.target.x, d.target.y);
+};
+
+const drawNode = (d) => {
+  context.moveTo(d.x + 5, d.y);
+  context.arc(d.x, d.y, 5, 0, 2 * Math.PI);
+};
+
+const dragstarted = (event) => {
+  if (!event.active) simulation.alphaTarget(0.3).restart();
+  event.subject.fx = event.subject.x;
+  event.subject.fy = event.subject.y;
+};
+
+const dragged = (event) => {
+  event.subject.fx = event.x;
+  event.subject.fy = event.y;
+};
+
+const dragended = (event) => {
+  if (!event.active) simulation.alphaTarget(0);
+  event.subject.fx = null;
+  event.subject.fy = null;
+}; 
+
+onMounted(() => {
+  canvas = d3
+    .select(chartContainer.value)
+    .append("canvas")
+    .attr("width", dpi * width)
+    .attr("height", dpi * height)
+    .attr("style", `width: ${width}px; max-width: 100%; height: auto;`)
+    .node();
+
+  context = canvas.getContext("2d");
+  context.scale(dpi, dpi);
+
+  simulation = d3
+    .forceSimulation(nodes)
+    .force(
+      "link",
+      d3.forceLink(links).id((d) => d.id),
+    )
+    .force("charge", d3.forceManyBody())
+    .force("center", d3.forceCenter(width / 3, height / 2))
+    .force("collision", d3.forceCollide().radius(0.5)) // Prevent nodes overflow
+    .on("tick", draw);
+
+  d3.select(canvas).call(
+    d3
+      .drag()
+      .subject((event) => {
+        const [px, py] = d3.pointer(event, canvas);
+        return d3.least(nodes, ({ x, y }) => {
+          const dist2 = (x - px) ** 2 + (y - py) ** 2;
+          if (dist2 < 400) return dist2;
+        });
+      })
+      .on("start", dragstarted)
+      .on("drag", dragged)
+      .on("end", dragended),
+  );
+
+  d3.select(canvas)
+    .on("mousemove", (event) => {
+      const [mx, my] = d3.pointer(event, canvas);
+      const node = d3.least(nodes, ({ x, y }) => {
+        const dist2 = (x - mx) ** 2 + (y - my) ** 2;
+        if (dist2 < 400) return dist2;
+      });
+      if (node) {
+        showTooltip(node);
+      } else {
+        hideTooltip();
+      }
+    });
+
+  const showTooltip = (node) => {
+    console.log("click");
+    const tooltip = d3.select("#tooltip");
+    tooltip
+      .style("display", "block")
+      .style("left", `${node.x}px`)
+      .style("top", `${node.y}px`)
+      .html(node.id);
+  };
+
+  const hideTooltip = () => {
+    const tooltip = d3.select("#tooltip");
+    tooltip.style("display", "none");
+  };
+});
 </script>
+
+<style>
+#tooltip {
+  position: absolute;
+  display: none;
+  background: #333;
+  color: #fff;
+  padding: 5px;
+  border-radius: 5px;
+  font-size: 10px;
+}
+</style>

@@ -1,52 +1,81 @@
 <template>
   <div class="mianPage">
+    <div class="title" id="title">
+    </div>
     <mian />
-    <mianInfo />
-    <!-- <div class="info">
-    </div> -->
-    <!-- <vue-draggable-resizable :w="100" :h="100" :parent="false">
-      <p>Hello! I'm a flexible component. You can drag me around and you can resize me.</p>
-    </vue-draggable-resizable>
-    <vue-draggable-resizable :w="100" :h="100" :parent="false">
-      <p>Hello! I'm a flexible component. You can drag me around and you can resize me.</p>
-    </vue-draggable-resizable>
-    <vue-draggable-resizable :w="100" :h="100" :parent="false">
-      <p>Hello! I'm a flexible component. You can drag me around and you can resize me.</p>
-    </vue-draggable-resizable> -->
+    <div class="initBox">
+      <mianInfo />
+    </div>
   </div>
+
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { ref ,onMounted } from "vue";
 import mian from "./components/d3/mian.vue";
 import mianInfo from "./components/info/mianInfo.vue";
+import TypeIt from "typeit";
+
+onMounted(() => {
+  createTypeItEffect("#title");
+});
+
+function createTypeItEffect(element, options = {}) {
+  // 默认选项
+  const defaultOptions = {
+    speed: 150, 
+    loop: true, 
+    lifeLike: true,
+  };
+
+  // 合并用户提供的选项和默认选项
+  const mergedOptions = { ...defaultOptions, ...options };
+
+  return new TypeIt(element, mergedOptions)
+      .delete() 
+      .type("Draggable", { delay: 100 })
+      .pause(500)
+      .move(-4)
+      .delete()
+      .type("Resize", { delay: 100 })
+      .move(4)
+      .pause(5000)
+      .delete()
+      .type("Visualization", { delay: 100 })
+      .pause(20000)
+      .go();
+}
 </script>
 
 <style>
 @import "vue-draggable-resizable/style.css";
+
+#title {
+  font-size: 3em;
+  font-weight: bold;
+  color: #000;
+  position: absolute;
+  top: 2%;
+  left: 3%;
+  font-family:DancingScript;
+}
+
 .mianPage {
   padding: 0px;
   margin: 0;
   width: 100vw;
   height: 100vh;
-  background-color: white;
   overflow: hidden;
   position: relative;
+  font-size: 24px;
+  background-color: #ffffff;
 }
 
-.test {
+.initBox {
+  width: 0px;
+  height: 0px;
   position: absolute;
-  width: 100px;
-  height: 100px;
-  background-color: red;
-}
-.info {
-  position: absolute;
-  width: 300px;
-  height: 100px;
-  border: 3px solid black;
-  position: absolute;
-  top: 50px;
-  right: 50px;
-}
+  top: 10%;
+  right: 450px;
+} 
 </style>
