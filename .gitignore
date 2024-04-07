@@ -30,4 +30,5 @@ coverage
 *.tsbuildinfo
 
 
-src/backend
+src/backend/_data
+src/backend/__pycache__

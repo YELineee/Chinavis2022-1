@@ -11,23 +11,22 @@
 
 <script setup>
 import * as d3 from "d3";
-import data from "../../backend/ipynb/sad/sad.json";
+import axios  from "axios";
 import { ref, onMounted } from "vue"; 
 
 const width = window.innerWidth - 30;
 const height = window.innerHeight - 30;
 const dpi = window.devicePixelRatio;
 
-const nodes = data.nodes;
-const links = data.links;
-
 let canvas = null;
 let context = null;
 let simulation = null;
+let nodes = null;
+let links = null;
 
 const chartContainer = ref(null);
 
-console.log(nodes, links);
+// console.log(nodes, links);
 
 const draw = () => {
 
@@ -127,8 +126,31 @@ const dragended = (event) => {
   event.subject.fy = null;
 }; 
 
-onMounted(() => {
-  canvas = d3
+const showTooltip = (node) => {
+    const tooltip = d3.select("#tooltip");
+    tooltip
+      .style("display", "block")
+      .style("left", `${node.x + 20}px`)
+      .style("top", `${node.y - 40}px`)
+      .html(node.id);
+  };
+
+const hideTooltip = () => {
+  const tooltip = d3.select("#tooltip");
+  tooltip.style("display", "none");
+};
+
+
+onMounted(async () => {
+  try {
+    const response = await axios.get('http://127.0.0.1:8000/data/CAG3');
+    const fetchedData = response.data;
+    nodes = fetchedData.nodes;
+    links = fetchedData.links;
+    console.log('nodes',nodes);
+
+
+    canvas = d3
     .select(chartContainer.value)
     .append("canvas")
     .attr("width", dpi * width)
@@ -147,7 +169,7 @@ onMounted(() => {
     )
     .force("charge", d3.forceManyBody())
     .force("center", d3.forceCenter(width / 3, height / 2))
-    .force("collision", d3.forceCollide().radius(0.5)) // Prevent nodes overflow
+    .force("collision", d3.forceCollide().radius(5)) // Prevent nodes overflow
     .on("tick", draw);
 
   d3.select(canvas).call(
@@ -179,20 +201,10 @@ onMounted(() => {
       }
     });
 
-  const showTooltip = (node) => {
-    console.log("click");
-    const tooltip = d3.select("#tooltip");
-    tooltip
-      .style("display", "block")
-      .style("left", `${node.x}px`)
-      .style("top", `${node.y}px`)
-      .html(node.id);
-  };
-
-  const hideTooltip = () => {
-    const tooltip = d3.select("#tooltip");
-    tooltip.style("display", "none");
-  };
+    
+  } catch (error) {
+    console.error('Error fetching data:', error);
+  }
 });
 </script>
 
