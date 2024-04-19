@@ -1,0 +1,38 @@
+{
+   "nodesCounts": 1079,
+   "linksCounts": 2345,
+   "nodesTypeCounts": [
+      {
+         "name": "Domain",
+         "value": 970
+      },
+      {
+         "name": "IP",
+         "value": 40
+      },
+      {
+         "name": "Whois_Phone",
+         "value": 17
+      },
+      {
+         "name": "Whois_Name",
+         "value": 14
+      },
+      {
+         "name": "Whois_Email",
+         "value": 14
+      },
+      {
+         "name": "IP_C",
+         "value": 13
+      },
+      {
+         "name": "Cert",
+         "value": 9
+      },
+      {
+         "name": "ASN",
+         "value": 2
+      }
+   ]
+}

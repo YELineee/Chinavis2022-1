@@ -1,0 +1,22 @@
+{
+   "nodesCounts": 401,
+   "linksCounts": 1099,
+   "nodesTypeCounts": [
+      {
+         "name": "Domain",
+         "value": 383
+      },
+      {
+         "name": "IP",
+         "value": 9
+      },
+      {
+         "name": "IP_C",
+         "value": 5
+      },
+      {
+         "name": "Cert",
+         "value": 4
+      }
+   ]
+}

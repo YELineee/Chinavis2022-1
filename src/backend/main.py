@@ -36,8 +36,8 @@ def read_root():
     return {"Hello": "World"}
 
 
-@app.get("/data/{data_id}")
-async def read_nodes(data_id):
+@app.get("/data/read_nodes")
+async def read_nodes(id: str | None = None):
     """
     Endpoint to read D3.js data.
     Reads the JSON data from a file based on the provided data_id.
@@ -45,9 +45,24 @@ async def read_nodes(data_id):
     If the file is not found, returns an error message.
     """
     try:
-        with open(f"./ipynb/{data_id}/{data_id}_D3.json", "r") as file:
+        with open(f"./ipynb/{id}/{id}_D3.json", "r") as file:
             nodes = json.load(file)
         return nodes
     
     except FileNotFoundError:
         return {"error": "File not found."}
+    
+
+# @app.post("/data/mianInfo={data_id}")
+# async def read_mianInfo()
+
+@app.get("/data/mianInfo")
+async def read_items(id: str | None = None):
+
+    try:
+        with open(f"./ipynb/{id}/{id}_mianInfo.json", "r") as file:
+            mianInfo = json.load(file)
+        return mianInfo
+    
+    except FileNotFoundError:
+        return {"error": f"File not foundd."}
