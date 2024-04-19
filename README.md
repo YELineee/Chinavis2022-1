@@ -1,35 +1,32 @@
 # Chinavis2022-1
 
-This template should help get you started developing with Vue 3 in Vite.
-
-## Recommended IDE Setup
+Kisskiss peace and love
+## Technology Stack
 ### Frontend
 
-- [VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar)  + [TypeScript Vue Plugin (Volar)](https://marketplace.visualstudio.com/items?itemName=Vue.vscode-typescript-vue-plugin).
-- Echarts
-- D3.js
-- ...
+- [Vue](https://vuejs.org/)
+- [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar)
+- [Pinia](https://pinia.vuejs.org/)
+- [Echarts](https://echarts.apache.org/examples/en/index.html)
+- [D3.js](https://d3js.org/)
+- axios
 
-### backend
+### Backend
+- [fastapi](https://fastapi.tiangolo.com)
 
-## Customize configuration
 
-See [Vite Configuration Reference](https://vitejs.dev/config/).
-
-## Project Setup
+## IDE Setup
+### Frontend Setup
 
 ```sh
 npm install
-```
-
-### Compile and Hot-Reload for Development
-
-```sh
 npm run dev
 ```
 
-### Type-Check, Compile and Minify for Production
+### Backend Setup(Python 11.7)
 
 ```sh
-npm run build
+pip install uvicorn fastapi
+uvicorn main:app --reload
 ```
+
