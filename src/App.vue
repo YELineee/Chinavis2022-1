@@ -4,9 +4,12 @@
     <div class="toolbar">
       <toolBar />
     </div>
-    <mian />
+    <mian v-if="true" />
     <div class="initBox">
       <mianInfo v-if="componentVisibility.mainInfo" />
+      <sizeInfo v-if="componentVisibility.sizeInfo" />
+      <selectInfo v-if="componentVisibility.selectInfo" />
+      <chartsInfo v-if="componentVisibility.chartsInfo" />
     </div>
   </div>
 </template>
@@ -17,6 +20,9 @@ import { useStatesStore } from "./stores/states";
 
 import mian from "./components/d3/mian.vue";
 import mianInfo from "./components/info/mianInfo.vue";
+import sizeInfo from "./components/info/sizeInfo.vue";
+import selectInfo from "./components/info/selectInfo.vue";
+import chartsInfo from "./components/info/chartsInfo.vue";
 import toolBar from "./components/info/toolbar.vue";
 
 import TypeIt from "typeit";
@@ -27,7 +33,6 @@ const { componentVisibility, showComponent, hideComponent } = store;
 
 onMounted(() => {
   createTypeItEffect("#title");
-  console.log(componentVisibility);
 });
 
 function createTypeItEffect(element, options = {}) {

@@ -7,11 +7,10 @@
     :min-height="800"
     :drag-handle="'.macos'"
     :resizable="true"
-    @resizing="resize"
     ref="toolbarRef"
   >
-    <div class="macos" ref="macosRef" @dblclick="handleDbClick()">
-      <div class="xButton" @click="hideComponent('mainInfo')">
+    <div class="macos" ref="macosRef">
+      <div class="xButton" @click="hideComponent('sizeInfo')">
         <svg
           width="30px"
           height="30px"
@@ -35,18 +34,7 @@
       </div>
     </div>
     <div class="mainpage" ref="mainpageRef">
-      <div class="mainInfo">
-        <h2 @click="updateData()">Main Information</h2>
-        <h4>Node count: {{ nodesCount }}</h4>
-        <h4>Link count: {{ linksCount }}</h4>
-        <h4>Type count:</h4>
-        <echarts_pie
-          ref="chartRef"
-          v-if="getData"
-          :pieData="pieData"
-          :linksCount="linksCount"
-        />
-      </div>
+      <div class="mainInfo">sadasdasdsa</div>
     </div>
   </vue-draggable-resizable>
 </template>
@@ -59,63 +47,9 @@ import echarts_pie from "../echarts/echarts_pie.vue";
 import axios from "axios";
 
 const store = useStatesStore();
-
 const { hideComponent } = store;
 
-const getData = ref(false);
-
-const nodesCount = ref<number>();
-const linksCount = ref<number>();
-const pieData = ref<object>();
-
-const chartRef = ref<HTMLElement | null>(null);
 const macosRef = ref<HTMLElement | null>(null);
-const mainpageRef = ref<HTMLElement | null>(null);
-const toolbarRef = ref<HTMLElement | null>(null);
-
-const resize = () => {
-  (chartRef.value as any).resizeChart();
-};
-
-const dispose = () => {
-  (chartRef.value as any).disposeChart();
-};
-
-// const closePages = () => {
-//   (toolbarRef.value as any).$el.style.display = 'none';
-// };
-
-const updateData = async () => {
-  try {
-    const idList = ["CAG1", "CAG2", "CAG3", "CAG4", "CAG5"];
-    const id = idList[Math.floor(Math.random() * idList.length)];
-    const response = await axios.get(
-      `http://127.0.0.1:8000/data/mianInfo?id=${id}`,
-    );
-    const newData = response.data;
-
-    nodesCount.value = newData.nodesCounts;
-    linksCount.value = newData.linksCounts;
-    pieData.value = newData.nodesTypeCounts;
-  } catch (error) {
-    console.error("Error while updating data:", error);
-  }
-};
-
-const handleDbClick: () => void = () => {
-  console.log("dbclick");
-  console.log(toolbarRef);
-};
-
-onMounted(async () => {
-  await axios.get("http://127.0.0.1:8000/data/mianInfo?id=CAG1").then((res) => {
-    nodesCount.value = res.data.nodesCounts;
-    linksCount.value = res.data.linksCounts;
-    pieData.value = res.data.nodesTypeCounts;
-    // console.log(pieData);
-    getData.value = true;
-  });
-});
 </script>
 
 <style scoped>

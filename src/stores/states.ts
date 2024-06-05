@@ -1,3 +1,4 @@
+import SizeInfo from '@/components/info/sizeInfo.vue';
 import { defineStore } from 'pinia';
 
 export const useStatesStore = defineStore({
@@ -9,6 +10,9 @@ export const useStatesStore = defineStore({
 
     componentVisibility: {
       mainInfo: true,
+      sizeInfo: false,
+      chartsInfo: false,
+      selectInfo: false,
     } as Record<string, boolean>, 
     
   }),

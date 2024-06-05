@@ -161,7 +161,7 @@ const hideTooltip = () => {
 onMounted(async () => {
   try {
     const response = await axios.get(
-      "http://127.0.0.1:8000/data/read_nodes?id=CAG4",
+      "http://127.0.0.1:8000/data/read_nodes?id=CAG1",
     );
     const fetchedData = response.data;
     nodes = fetchedData.nodes;
