@@ -1,5 +1,5 @@
-<template>
-  <div class="mianPage">
+<template >
+  <div class="mianPage" v-if="!large">
     <div class="title" id="title"></div>
     <div class="toolbar">
       <toolBar />
@@ -11,6 +11,11 @@
       <selectInfo v-if="componentVisibility.selectInfo" />
       <chartsInfo v-if="componentVisibility.chartsInfo" />
     </div>
+  </div>
+
+  <div class="mianPage" v-else>
+    <div class="title" id="title"></div>
+    <largeScreen />
   </div>
 </template>
 
@@ -24,10 +29,14 @@ import sizeInfo from "./components/info/sizeInfo.vue";
 import selectInfo from "./components/info/selectInfo.vue";
 import chartsInfo from "./components/info/chartsInfo.vue";
 import toolBar from "./components/info/toolbar.vue";
+import largeScreen from "./views/large.vue";
 
 import TypeIt from "typeit";
 
 const store = useStatesStore();
+
+// const large = ref(true);
+const large = ref(false);
 
 const { componentVisibility, showComponent, hideComponent } = store;
 
@@ -94,7 +103,6 @@ function createTypeItEffect(element, options = {}) {
   right: 0;
 }
 .toolbar {
-  border: red 1px solid;
   position: absolute;
   right: 13px;
   bottom: 13px;

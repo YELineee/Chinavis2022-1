@@ -2,7 +2,7 @@
    <vue-draggable-resizable
      class-name="toolbar"
      :w="800"
-     :h="800"
+     :h="850"
      :min-width="400"
      :min-height="800"
      :drag-handle="'.macos'"
@@ -36,6 +36,10 @@
      <div class="mainpage" ref="mainpageRef">
        <div class="mainInfo">
          <echarts_sankey/>
+         <div style="display: flex;">
+          <echarts_force />
+           <echarts_nodePie/>
+         </div>
        </div>
      </div>
    </vue-draggable-resizable>
@@ -46,6 +50,8 @@
  import { useStatesStore } from "@/stores/states";
  
  import echarts_sankey from "../echarts/echarts_sankey.vue";
+ import echarts_nodePie from "../echarts/echarts_nodePie.vue";
+ import echarts_force from "../echarts/echarts_force.vue";
  
  
  const store = useStatesStore();

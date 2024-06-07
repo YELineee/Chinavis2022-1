@@ -2,7 +2,7 @@
   <div style="padding: 10px">
     <div style="border: 3px solid black; border-radius: 10px">
       <div ref="chartContainer"></div>
-      <div id="tooltip">asdadasd</div>
+      <div id="tooltip"></div>
     </div>
   </div>
 </template>
